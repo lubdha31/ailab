@@ -1,0 +1,44 @@
+from collections import deque
+
+def bfs(start, goal):
+    queue = deque([(start, [])])
+    visited = set()
+
+    while queue:
+        state, path = queue.popleft()
+
+        if state == goal:
+            print("Solution found!")
+            for step in path + [state]:
+                print(step[:3])
+                print(step[3:6])
+                print(step[6:])
+                print()
+            return
+
+        if state in visited:
+            continue
+
+        visited.add(state)
+        zero = state.index(0)
+
+        for move in [-3, 3, -1, 1]:
+            new = zero + move
+
+            if 0 <= new < 9 and not (
+                (move == -1 and zero % 3 == 0) or
+                (move == 1 and zero % 3 == 2)
+            ):
+                temp = list(state)
+                temp[zero], temp[new] = temp[new], temp[zero]
+                new_state = tuple(temp)
+
+                if new_state not in visited:
+                    queue.append((new_state, path + [state]))
+
+    print("No solution found!")
+
+start = (1, 2, 3, 4, 0, 6, 7, 5, 8)
+goal = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+
+bfs(start, goal)
