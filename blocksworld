@@ -1,0 +1,77 @@
+def display(stacks):
+    print("Current State:", stacks)
+
+
+def move_block(stacks, block, destination, plan):
+    source = None
+
+    for stack in stacks:
+        if block in stack:
+            source = stack
+            break
+
+    if source is None or source[-1] != block:
+        return False
+
+    source.pop()
+
+    if destination == "table":
+        stacks.append([block])
+        plan.append("Move " + block + " to table")
+    else:
+        for stack in stacks:
+            if stack and stack[-1] == destination:
+                stack.append(block)
+                plan.append("Move " + block + " onto " + destination)
+                break
+
+    stacks[:] = [s for s in stacks if s]
+    return True
+
+
+def clear_block(stacks, block, plan):
+    while True:
+        for stack in stacks:
+            if block in stack:
+                if stack[-1] == block:
+                    return
+                top = stack[-1]
+                move_block(stacks, top, "table", plan)
+                break
+
+
+def goal_stack_planning(stacks, goal):
+    plan = []
+
+    for i, block in enumerate(goal):
+        clear_block(stacks, block, plan)
+
+        if i == 0:
+            destination = "table"
+        else:
+            destination = goal[i - 1]
+
+        if destination == "table":
+            continue
+
+        clear_block(stacks, destination, plan)
+        move_block(stacks, block, destination, plan)
+
+    print("\nGoal Stack Plan:")
+    for step in plan:
+        print(step)
+
+    print("\nFinal State:")
+    display(stacks)
+
+
+# Initial state
+stacks = [["A", "B"], ["C"]]
+
+# Goal: A at bottom, C on A, B on C
+goal = ["A", "C", "B"]
+
+print("Initial State:")
+display(stacks)
+
+goal_stack_planning(stacks, goal)
