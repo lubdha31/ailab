@@ -1,0 +1,30 @@
+import re
+
+def chatbot(user_input):
+    patterns = {
+        r"hello|hi|hey": "Hello! How can I help you?",
+        r"how are you": "I am fine. How are you?",
+        r"your name": "I am a Rule-Based Chatbot.",
+        r"what is ai": "AI stands for Artificial Intelligence.",
+        r"what is python": "Python is a high-level programming language.",
+        r"thank you|thanks": "You're welcome!",
+        r"bye|exit": "Goodbye! Have a nice day."
+    }
+
+    for pattern, response in patterns.items():
+        if re.search(pattern, user_input.lower()):
+            return response
+
+    return "Sorry, I don't understand your question."
+
+
+print("Chatbot: Hello! Type 'bye' to exit.")
+
+while True:
+    user = input("You: ")
+
+    response = chatbot(user)
+    print("Chatbot:", response)
+
+    if re.search(r"\b(bye|exit)\b", user.lower()):
+        break
