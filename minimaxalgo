@@ -1,0 +1,109 @@
+def print_board(board):
+    for i in range(0, 9, 3):
+        print(board[i], "|", board[i+1], "|", board[i+2])
+        if i < 6:
+            print("---------")
+
+
+def check_winner(board):
+    win = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ]
+
+    for a, b, c in win:
+        if board[a] == board[b] == board[c]:
+            if board[a] == 'X':
+                return 10
+            elif board[a] == 'O':
+                return -10
+
+    return 0
+
+
+def minimax(board, depth, is_max):
+    score = check_winner(board)
+
+    if score != 0:
+        return score
+
+    if ' ' not in board:
+        return 0
+
+    if is_max:
+        best = -1000
+
+        for i in range(9):
+            if board[i] == ' ':
+                board[i] = 'X'
+                best = max(best, minimax(board, depth + 1, False))
+                board[i] = ' '
+
+        return best
+
+    else:
+        best = 1000
+
+        for i in range(9):
+            if board[i] == ' ':
+                board[i] = 'O'
+                best = min(best, minimax(board, depth + 1, True))
+                board[i] = ' '
+
+        return best
+
+
+def best_move(board):
+    best = -1000
+    move = -1
+
+    for i in range(9):
+        if board[i] == ' ':
+            board[i] = 'X'
+            score = minimax(board, 0, False)
+            board[i] = ' '
+
+            if score > best:
+                best = score
+                move = i
+
+    return move
+
+
+board = [' '] * 9
+
+print("TIC TAC TOE")
+print("You = O, Computer = X")
+
+while True:
+    move = int(input("\nEnter position (1-9): ")) - 1
+
+    if move < 0 or move > 8 or board[move] != ' ':
+        print("Invalid move! Try again.")
+        continue
+
+    board[move] = 'O'
+    print_board(board)
+
+    if check_winner(board) == -10:
+        print("You Win!")
+        break
+
+    if ' ' not in board:
+        print("Match Draw!")
+        break
+
+    computer = best_move(board)
+    board[computer] = 'X'
+
+    print("\nComputer's Move:")
+    print_board(board)
+
+    if check_winner(board) == 10:
+        print("Computer Wins!")
+        break
+
+    if ' ' not in board:
+        print("Match Draw!")
+        break
